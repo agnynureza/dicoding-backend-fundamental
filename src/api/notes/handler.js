@@ -1,6 +1,4 @@
-const InvariantError = require('../../exceptions/invariantError');
-const NotFoundError = require('../../exceptions/notFoundError');
-const ClientError = require('../../exceptions/notFoundError');
+const ClientError = require('../../exceptions/clientError');
 
 class NotesHandler{
   constructor(service, validator){
@@ -46,7 +44,6 @@ class NotesHandler{
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       response.code(500);
-      console.error(error);
       return response;
     }
   }
@@ -87,7 +84,6 @@ class NotesHandler{
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       response.code(500);
-      console.error(error);
       return response;
     }
   }
@@ -119,7 +115,6 @@ class NotesHandler{
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       response.code(500);
-      console.error(error);
       return response;
     }
   }
@@ -148,7 +143,6 @@ class NotesHandler{
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       response.code(500);
-      console.error(error);
       return response;
     };
   }; 
