@@ -1,8 +1,8 @@
 const ClientError = require('../../exceptions/clientError');
 
-class NotesHandler{
-  constructor(service, validator){
-    this._service = service
+class NotesHandler {
+  constructor(service, validator) {
+    this._service = service;
     this._validator = validator;
 
     this.postNoteHandler = this.postNoteHandler.bind(this);
@@ -13,12 +13,12 @@ class NotesHandler{
   }
 
   async postNoteHandler(request, h) {
-    try{
+    try {
       this._validator.validateNotePayload(request.payload);
       const { title = 'untitled', body, tags } = request.payload;
 
       const noteId = await this._service.addNote({ title, body, tags });
-  
+
       const response = h.response({
         status: 'success',
         message: 'Catatan berhasil ditambahkan',
@@ -28,7 +28,7 @@ class NotesHandler{
       });
       response.code(201);
       return response;
-    }catch(error){
+    } catch (error) {
       if (error instanceof ClientError) {
         const response = h.response({
           status: 'fail',
@@ -92,9 +92,9 @@ class NotesHandler{
     try {
       this._validator.validateNotePayload(request.payload);
       const { id } = request.params;
- 
+
       await this._service.editNoteById(id, request.payload);
- 
+
       return {
         status: 'success',
         message: 'Catatan berhasil diperbarui',
@@ -144,10 +144,8 @@ class NotesHandler{
       });
       response.code(500);
       return response;
-    };
-  }; 
+    }
+  }
 }
-
-
 
 module.exports = NotesHandler;
