@@ -8,6 +8,8 @@ class AuthenticationHandler {
     this._validator = validator;
 
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
+    this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
+    this.deleteAuthenticationHandler = this.deleteAuthenticationHandler.bind(this);
   }
 
   async postAuthenticationHandler(request, h) {
@@ -49,6 +51,74 @@ class AuthenticationHandler {
 
       console.error(error);
       response.code(500);
+    }
+  }
+
+  async putAuthenticationHandler(request, h) {
+    try {
+      this._validator.validatePutAuthenticationPayload(request.payload);
+
+      const { refreshToken } = request.payload;
+      await this._authenticationsService.verifyRefreshToken(refreshToken);
+      const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+
+      const accessToken = this._tokenManager.generateAccessToken({ id });
+      return {
+        status: 'success',
+        message: 'Access Token berhasil diperbarui',
+        data: {
+          accessToken,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return;
+      }
+      // server error
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+
+      console.error(error);
+      response.code(500);
+    }
+  }
+
+  async deleteAuthenticationHandler(request, h) {
+    try {
+      this._validator.validateDeleteAuthenticationPayload(request.payload);
+      const { refreshToken } = request.payload;
+      await this._authenticationsService.verifyRefreshToken(refreshToken);
+      await this._authenticationsService.deleteRefreshToken(refreshToken);
+
+      return {
+        status: 'success',
+        message: 'Refresh token berhasil dihapus',
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+
+      // Server ERROR!
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
     }
   }
 }
