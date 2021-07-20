@@ -32,15 +32,14 @@ class AuthenticationHandler {
         },
       });
 
-      response.code(201);
+      return response.code(201);
     } catch (error) {
       if (error instanceof ClientError) {
         const response = h.response({
           status: 'fail',
           message: error.message,
         });
-        response.code(error.statusCode);
-        return;
+        return response.code(error.statusCode);
       }
 
       // server error
@@ -50,7 +49,7 @@ class AuthenticationHandler {
       });
 
       console.error(error);
-      response.code(500);
+      return response.code(500);
     }
   }
 
@@ -63,21 +62,22 @@ class AuthenticationHandler {
       const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
 
       const accessToken = this._tokenManager.generateAccessToken({ id });
-      return {
+
+      const response = h.response({
         status: 'success',
         message: 'Access Token berhasil diperbarui',
         data: {
           accessToken,
         },
-      };
+      });
+     return  response.code(200);
     } catch (error) {
       if (error instanceof ClientError) {
         const response = h.response({
           status: 'fail',
           message: error.message,
         });
-        response.code(error.statusCode);
-        return;
+        return response.code(error.statusCode);
       }
       // server error
       const response = h.response({
@@ -86,7 +86,7 @@ class AuthenticationHandler {
       });
 
       console.error(error);
-      response.code(500);
+      return response.code(500);
     }
   }
 
