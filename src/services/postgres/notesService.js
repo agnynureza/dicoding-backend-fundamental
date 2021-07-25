@@ -30,7 +30,7 @@ class NotesService {
   }
 
   async getNotes(owner) {
-    const result = await this._pool.query('SELECT * FROM notes WHERE owner = $1', owner);
+    const result = await this._pool.query('SELECT * FROM notes WHERE owner = $1', [owner]);
     return result.rows.map(mapDBToModel);
   }
 
